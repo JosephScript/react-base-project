@@ -224,7 +224,7 @@ By default `webpack-dev-server` will trigger a full page refresh. However we can
 
 It's smart too, because it detects which modules are required and which have changed. If the polling shows no changes needed, nothing happens.
 
-Add `--inline --hot` to your npm start flags. Nothing more is needed. This does all the relevant work automatically. The CLI of the `webpack-dev-server` automatically adds the special `webpack/hot/dev-server` entry point to your configuration.
+Add `--inline --hot` to your npm start script. Nothing more is needed. This does all the relevant work automatically. The CLI of the `webpack-dev-server` automatically adds the special `webpack/hot/dev-server` entry point to your configuration.
 
 Just navigate to `http://«host»:«port»/«path»` and let the magic happen.
 
@@ -238,6 +238,8 @@ You should see the following messages in the browser log:
 See [here](http://webpack.github.io/docs/webpack-dev-server.html#hot-module-replacement) for more details.
 
 If you insted want to use an express/node webpack server as middleware, check out (webpack-hot-middleware)[https://github.com/glenjamin/webpack-hot-middleware].
+
+Unfortunately HMR doesn't work perfectly with with React Components yet. If you want, check out (react-hot-loader)[https://github.com/gaearon/react-hot-loader] to enable it (not prod ready as of writing).
 
 ## React:
 
@@ -255,15 +257,14 @@ module.exports = {
   ...
   module: {
     loaders: [
-    ...
-    {
-        test: /\.js$/,
+      {
+        test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/,
         loader: 'babel-loader',
         query: {
           presets: ['es2015', 'react']
-        }
-    }
+      },
+      ...
 ```
 
 And add react itself (Note that because React is required for our application to run, we’re using `--save `rather than `--save-dev`.):
