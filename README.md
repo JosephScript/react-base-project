@@ -1,6 +1,6 @@
 # A Guide to React for FE developers
 
-If our React walk through we're going to be using the React JavaScript library for quickly building really fast interfaces, Node and Express for our server and mock routes, Gulp for running tasks, and webpack as our package bundler.
+In this React walk through we're going to be using the React JavaScript library for quickly building really fast interfaces, Webpack as our package bundler and to run our development server. Then we'll create a testing suite using Enzyme and Mocha. You can easily substitute Mocha with any other testing framework (Sinon, Jasmine, etc.). Finally I'll show you how to integrate Webpack with Gulp (you could swap this out with Grunt easily).
 
 This tutorial does not cover Flux/Reflux/Redux. Why? You probably don't need it for building small components and interfaces, and if you start building things using the parent/child data relationship that's built into react. It's better to learn how to "think react" instead of relying on Redux which has its tradeoffs. Come back to Redux if you find a real need for it. (I might cover Redux in a later guide.)
 
@@ -14,13 +14,13 @@ npm init
 
 When you run `npm init` fill in the details however you see fit. In my case I used `server.js` as my `main` file, and this will be the server that serves static assets.
 
-## webpack:
+## Webpack:
 
-Let's go ahead and create a webpack configuration file. With webpack we can bundle up all of our assets into a single JS package, which reduces wait time by the browser and includes all of our CSS and images! In addition we can use a module loader such as CommonJS, RequireJS, AMD, Browserify or ES2015/ES6 Imports right inside our JS files, write your JS using latest (ES6, ES7 and beyond) standards/features and transpile it into any target JavaScript version you like, as well use any CSS preprocessors (Sass and Less, or pure css) and post-processors (never write a vendor prefix again!), images processors (do you like Data URIs?) or any other file loaders we like. Everything is embedded right into the JS file!
+Let's go ahead and create a Webpack configuration file. With Webpack we can bundle up all of our assets into a single JS package, which reduces wait time by the browser and includes all of our CSS and images! In addition we can use a module loader such as CommonJS, RequireJS, AMD, Browserify or ES2015/ES6 Imports right inside our JS files, write your JS using latest (ES6, ES7 and beyond) standards/features and transpile it into any target JavaScript version you like, as well use any CSS preprocessors (Sass and Less, or pure css) and post-processors (never write a vendor prefix again!), images processors (do you like Data URIs?) or any other file loaders we like. Everything is embedded right into the JS file!
 
 (You can optionally extract stylesheets into a css file, or export images instead of creating embedded data URIs if you like.)
 
-Let's install webpack:
+Let's install Webpack:
 
 ```
 npm install webpack --global
@@ -29,8 +29,7 @@ npm install webpack --save-dev
 
 Let's assume we have all of our app's source code inside `/src` and make a basic webpack configuration in `webpack.config.js`, we will build on it as we go.
 
-
-```
+``` JavaScript
 module.exports = {
   context: __dirname + "/src",
   entry: "./app.js",
@@ -46,7 +45,7 @@ This tells webpack that our app is in the src directory and the entry point to o
 
 Make sure it works by adding the file `src/app.js` and putting a `console.log` into it, just to make sure everything works.
 
-```
+``` JavaScript
 // app.js
 console.log('Hello world!')
 ```
@@ -55,7 +54,7 @@ Run the bundler with `webpack -d`, and you should see the output file in `dist` 
 
 ### HTML Plugin
 
-If we wanted we could manually create an `HTML` file, point a `script` tag to this file and host it with Node/Express. But, there is a webpack loader called `html-loader` that will automatically create this html file with the correct location of the `dist/app.js` bundle.  
+If we wanted we could manually create an `HTML` file, point a `script` tag to this file and host it with Node/Express. But, there is a webpack loader called `html-loader` that will automatically create this html file with the correct location of the `dist/app.js` bundle.
 
 Go ahead and install the plugin:
 
@@ -63,7 +62,7 @@ Go ahead and install the plugin:
 
 Now we have to add the plugin to our `webpack.config.js`:
 
-```
+``` JavaScript
 var HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
@@ -76,7 +75,7 @@ module.exports = {
 
 This will generate a file `dist/index.html` containing the following:
 
-```
+``` HTML
 <!DOCTYPE html>
 <html>
   <head>
@@ -93,7 +92,7 @@ This is only the most basic configuration, so review the github page. Sometimes 
 
 In the output of the `webpack -d` command you'll see that it generates a hash, which we can use for cache busting. All you have to do is change the webpack.config.js file to include the hash:
 
-```
+``` JavaScript
 module.exports = {
   context: __dirname + "/src",
   entry: "./app.js",
@@ -131,7 +130,7 @@ webpack-dev-server --progress --inline
 
 This is a really clumsy thing to type, so let's add it as npm start:
 
-```
+``` JSON
 // package.json
 
 {
@@ -154,7 +153,7 @@ For example, you can use loaders to tell webpack to load CoffeeScript or JSX.
 
 Update your `webpack.config.js` to include some loaders:
 
-```
+``` JavaScript
 module.exports = {
   ...
   module: {
@@ -168,7 +167,7 @@ module.exports = {
 }
 ```
 
-This webpack config can load styles using `style-loader` which adds CSS to the DOM by injecting a <style> tag, the `css-loader` returns css, resolves imports and url(...), and is used along with the `url-loader` which embeds small png images as Data Urls and `file-loader` loads jpg images as files. The `test` is what matching files (using regex) should be loaded using this loader the `limit` is an example of a loader which takes parameters.
+This webpack config can load styles using `style-loader` which adds CSS to the DOM by injecting a `<style>` tag, the `css-loader` returns css, resolves imports and url(...), and is used along with the `url-loader` which embeds small png images as Data Urls and `file-loader` loads jpg images as files. The `test` is what matching files (using regex) should be loaded using this loader the `limit` is an example of a loader which takes parameters.
 
 Loaders must be installed via NPM, so let's do that.
 
@@ -196,7 +195,7 @@ npm install babel-loader babel-core babel-preset-es2015 --save-dev
 
 Now go ahead and add the loader and we'll tell it to use the preset `es2015`, and to test `.js` files, but exclude node_modules and bower_components.
 
-```
+``` JavaScript
 // webpack.config.js
 module.exports = {
   ...
@@ -231,7 +230,7 @@ Secondly, push `'webpack/hot/dev-server'` to `entry`, and `new webpack.HotModule
 
 `webpack/hot/dev-server` will reload the entire page if the HMR update fails. If you want to reload the page on your own, you can add `webpack/hot/only-dev-server` to the entry point instead.
 
-```
+``` JavaScript
 // webpack.config.js
 ...
 var webpack = require('webpack')
@@ -260,7 +259,7 @@ First we have to add react to our babel loaders.
 npm install babel-preset-react --save-dev
 ```
 
-```
+``` JavaScript
 // webpack.config.js
 module.exports = {
   ...
@@ -283,19 +282,20 @@ And add react itself (Note that because React is required for our application to
 npm install react react-dom --save
 ```
 
-Now we can update our app.js file to be a super basic component that renders into the DOM using JSX.
+Now we can update our app.js file to be a super basic component that renders into the DOM using JSX. (Note: The .jsx extension is optional. If you decide to use .jsx make sure you update the loader accordingly.)
 
 > You don't have to use JSX and can just use plain JS. However, we recommend using JSX because it is a concise and familiar syntax for defining tree structures with attributes.
 
 Read [this](https://facebook.github.io/react/docs/jsx-in-depth.html) to see why.
 
-```
+
+``` JavaScript
 import { render } from 'react-dom';
 import React from 'react';
 
 render(
-  <h1>
-    This is a React test!
+  <h1 class="greeting">
+    Hello, World!
   </h1>,
   document.body
 )
@@ -309,23 +309,26 @@ You shouldn't render react directly into the body. There are two things you can 
 
 1) Use a plain javascript object which you append to the body as your entry point:
 
-```
+
+``` JavaScript
 var root = document.createElement('div')
 document.body.appendChild(root)
 
 ReactDOM.render(
-  <h1>Sherlock Holmes</h1>,
+  <h1 class="greeting">
+    Hello, World!
+  </h1>,
   root
 )
 ```
-
 
 2) Render into an existing HTML element:
 
 This is more likely what you'll do, such as if you have an existing page that you want to render into.
 
 Update your HtmlWebpackPlugin to use a template
-```
+
+``` JavaScript
 // webpack.config.js
 ...
 
@@ -344,9 +347,9 @@ module.exports = {
 
 Here `inject: 'body'` means that your JS will be injected into the template body before the closing tag. In production we would just link to the JS file there any way.
 
-Then create an HTML page to serve as a template
+Then create an HTML page to serve as a template:
 
-```
+``` HTML
 // index.template.html
 <!DOCTYPE html>
 <html>
@@ -356,20 +359,98 @@ Then create an HTML page to serve as a template
 </html>
 ```
 
-Now update the JSX
+Now update the JSX to use the root div instead:
 
-```
+``` JavaScript
 // app.js
 var root = document.getElementById('react-root')
 
 ReactDOM.render(
-  <h1>Sherlock Holmes</h1>,
+  <h1 class="greeting">
+    Hello, World!
+  </h1>,
   root
 )
 ```
 
+### React Components
+
+React is component-focused, and components are the primary structure of React. Data flows through React from parent to child components, so you do not have to deal with confusing two-way data-flow. In addition, child components only have access to data their parents explicitly pass down to them, further decoupling them from each other.
+
+Let's build a more realistic React app and split it up into components.
+
+Create a new file, `src/components/greeting.js`
+
+``` JavaScript
+import React from 'react'
+
+export default class Greeting extends React.Component {
+  render () {
+    return (
+      <h1 className='greeting'>
+        Hello,
+        {this.props.name}!
+      </h1>
+    )
+  }
+}
+```
+
+Here you can see we're using `React.Component` which is an ES6 class. `export` is used to make it a JS Module. Inside the class is `render` which is a function that returns some JSX. `this.props` is an object that contains any properties passed to it from it's parent. Finally, because `class` is a reserved word in JS we're JSX uses `className` instead. This is a common mistake to watch out for!
+
+Note: You can also use `React.createClass` instead of `React.Component`, but it has a different syntax. I prefer the ES6 syntax, which uses less React boilerplate and more JavaScript.
+
+Now update our `app.js` to render our new component.
+
+``` JavaScript
+import './styles.css'
+import React from 'react'
+import ReactDOM from 'react-dom'
+import Greeting from './components/greeting'
+
+var root = document.createElement('div')
+document.body.appendChild(root)
+
+ReactDOM.render(
+  <Greeting name='World' />,
+  root
+)
+```
+
+We simply import the component as a module, and render it the same as we would any HTML, except we use our classes name specifically. In addition, we can pass any props we like to the child. Since the child is expecting a `name` prop, we're passing in `name="World"` which looks and feels just like HTML!
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Testing
 
 
 
@@ -378,4 +459,4 @@ ReactDOM.render(
 
 ## Gulp
 
-webpack can sometimes be limited because of how new it is, and with how ubiquitous Gulp tasks are you may want more fine grained build processes. Luckily because Gulp and webpack are just JS, it turns out that integrating Gulp into your webpack workflow is easy.
+webpack can sometimes be limited because of how new it is, and with how ubiquitous Gulp tasks are you may want more fine grained build processes. Luckily because Gulp and webpack are just Node JS packages, it turns out that integrating Gulp into your webpack workflow is easy.
