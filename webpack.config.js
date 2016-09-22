@@ -4,8 +4,6 @@ var webpack = require('webpack')
 module.exports = {
   context: __dirname + '/src',
   entry: [
-    'webpack-dev-server/client?http://0.0.0.0:8080',
-    'webpack/hot/only-dev-server',
     './app.js'
   ],
   output: {
@@ -13,10 +11,7 @@ module.exports = {
     path: __dirname + '/dist'
   },
   plugins: [
-    new HtmlWebpackPlugin(),
-    new webpack.optimize.OccurenceOrderPlugin(),
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin()
+    new HtmlWebpackPlugin()
   ],
   module: {
     loaders: [

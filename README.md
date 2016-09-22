@@ -222,35 +222,22 @@ import './styles.css'
 
 By default `webpack-dev-server` will trigger a full page refresh. However we can use something called Hot Module Replacement, or HMR. HMR adds a small runtime to the bundle during the build process that runs inside your app and detects changes. It’s like LiveReload for every module, thus HMR is faster because it updates code in-place without refreshing.
 
-It's smart too, because it detects which modules are required and which have changed. If the polling shows no changes needed, nothing happens. It can also output really useful error messages on the page.
+It's smart too, because it detects which modules are required and which have changed. If the polling shows no changes needed, nothing happens.
 
-Lets set it up! First change the npm start script to include the `--hot` flag.
+Add `--inline --hot` to your npm start flags. Nothing more is needed. This does all the relevant work automatically. The CLI of the `webpack-dev-server` automatically adds the special `webpack/hot/dev-server` entry point to your configuration.
 
-Secondly, push `'webpack/hot/dev-server'` and `webpack-dev-server/client?http://0.0.0.0:8080` to `entry`, and `new webpack.HotModuleReplacementPlugin()` to `plugins`.
+Just navigate to `http://«host»:«port»/«path»` and let the magic happen.
 
-`webpack/hot/dev-server` will reload the entire page if the HMR update fails. If you want to reload the page on your own, you can add `webpack/hot/only-dev-server` to the entry point instead.
+You should see the following messages in the browser log:
 
-`webpack-dev-server/client?http://0.0.0.0:8080` tells the socket what url your app is located at.
-
-``` JavaScript
-// webpack.config.js
-...
-var webpack = require('webpack')
-
-module.exports = {
-  ...
-  entry: [
-    'webpack-dev-server/client?http://0.0.0.0:8080',
-    'webpack/hot/dev-server',
-    './app.js'
-  ],
-  ...
-  plugins: [
-    new HtmlWebpackPlugin(),
-    new webpack.HotModuleReplacementPlugin()
-  ]
-}
 ```
+[HMR] Waiting for update signal from WDS...
+[WDS] Hot Module Replacement enabled.
+```
+
+See [here](http://webpack.github.io/docs/webpack-dev-server.html#hot-module-replacement) for more details.
+
+If you insted want to use an express/node webpack server as middleware, check out (webpack-hot-middleware)[https://github.com/glenjamin/webpack-hot-middleware].
 
 ## React:
 
