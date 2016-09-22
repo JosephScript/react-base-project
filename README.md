@@ -239,16 +239,15 @@ See [here](http://webpack.github.io/docs/webpack-dev-server.html#hot-module-repl
 
 If you insted want to use an express/node webpack server as middleware, check out (webpack-hot-middleware)[https://github.com/glenjamin/webpack-hot-middleware].
 
-Unfortunately HMR doesn't work perfectly with with React Components yet. If you want, check out (react-hot-loader)[https://github.com/gaearon/react-hot-loader] to enable it (not prod ready as of writing).
-
 ## React:
 
 Let's start off with a really dead simple app just to make sure our build process is working and React. Then we can start adding in pieces and tests as we go along. For now, let's just get a `p` tag on the page with a hello world.
 
-First we have to add react to our babel loaders.
+First we have to add react to our babel loaders. In addition to enable HMR for React, we need to add the appropriate React tools to compile the modules with HMR support.
+
 
 ```
-npm install babel-preset-react --save-dev
+npm install babel-preset-react babel-preset-react-hmre --save-dev
 ```
 
 ``` JavaScript
@@ -262,7 +261,7 @@ module.exports = {
         exclude: /(node_modules|bower_components)/,
         loader: 'babel-loader',
         query: {
-          presets: ['es2015', 'react']
+          presets: ['es2015', 'react', 'react-hmre']
       },
       ...
 ```
