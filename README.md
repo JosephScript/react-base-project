@@ -220,15 +220,17 @@ import './styles.css'
 
 ### Hot Module Replacement
 
-By default `webpack-dev-server` will trigger a full page refresh. However we can use something called Hot Module Replacement, or HMR. HMR adds a small runtime to the bundle during the build process that runs inside your app and detects changes. It’s like LiveReload for every module.
+By default `webpack-dev-server` will trigger a full page refresh. However we can use something called Hot Module Replacement, or HMR. HMR adds a small runtime to the bundle during the build process that runs inside your app and detects changes. It’s like LiveReload for every module, thus HMR is faster because it updates code in-place without refreshing.
 
-It's smart too, because it detects which modules are required and which have changed. If the polling shows no changes needed, nothing happens. It also outputs really useful error messages on the page.
+It's smart too, because it detects which modules are required and which have changed. If the polling shows no changes needed, nothing happens. It can also output really useful error messages on the page.
 
 Lets set it up! First change the npm start script to include the `--hot` flag.
 
-Secondly, push `'webpack/hot/dev-server'` to `entry`, and `new webpack.HotModuleReplacementPlugin()` to `plugins`.
+Secondly, push `'webpack/hot/dev-server'` and `webpack-dev-server/client?http://0.0.0.0:8080` to `entry`, and `new webpack.HotModuleReplacementPlugin()` to `plugins`.
 
 `webpack/hot/dev-server` will reload the entire page if the HMR update fails. If you want to reload the page on your own, you can add `webpack/hot/only-dev-server` to the entry point instead.
+
+`webpack-dev-server/client?http://0.0.0.0:8080` tells the socket what url your app is located at.
 
 ``` JavaScript
 // webpack.config.js
@@ -238,8 +240,9 @@ var webpack = require('webpack')
 module.exports = {
   ...
   entry: [
-    './app.js',
-    'webpack/hot/dev-server'
+    'webpack-dev-server/client?http://0.0.0.0:8080',
+    'webpack/hot/dev-server',
+    './app.js'
   ],
   ...
   plugins: [
@@ -282,7 +285,7 @@ And add react itself (Note that because React is required for our application to
 npm install react react-dom --save
 ```
 
-Now we can update our app.js file to be a super basic component that renders into the DOM using JSX. (Note: The .jsx extension is optional. If you decide to use .jsx make sure you update the loader accordingly.)
+Now we can update our app.js file to be a super basic component that renders into the DOM using JSX. (Note: The .jsx extension is optional. If you decide to use .jsx make sure you update the loader accordingly.) JSX writes very similarly to HTML, and you can write any HTML entities you like.
 
 > You don't have to use JSX and can just use plain JS. However, we recommend using JSX because it is a concise and familiar syntax for defining tree structures with attributes.
 
@@ -387,10 +390,7 @@ import React from 'react'
 export default class Greeting extends React.Component {
   render () {
     return (
-      <h1 className='greeting'>
-        Hello,
-        {this.props.name}!
-      </h1>
+      <h1 className='greeting'>Hello, {this.props.name}!</h1>
     )
   }
 }
@@ -417,10 +417,34 @@ ReactDOM.render(
 )
 ```
 
-We simply import the component as a module, and render it the same as we would any HTML, except we use our classes name specifically. In addition, we can pass any props we like to the child. Since the child is expecting a `name` prop, we're passing in `name="World"` which looks and feels just like HTML!
+We simply import the component as a module, and render it the same as we would any HTML, except we use our `Greeting` class name specifically. In addition, we can pass any `props` we like to the child. Since the child is expecting a `name` prop, we're passing in `name="World"` which looks and feels just like HTML!
+
+Because we're using ES6 classes, we also have access to the constructor of our `Greeting` class. If you want to do some kind of work on the class when it's created, add the `constructor` function. Optionally, you can access the child's `props` here. If you want to use `props` inside the constructor you must pass them to `super`.
 
 
+``` JavaScript
+export default class Greeting extends React.Component {
+  constructor() {
+    super()
+    console.log('We can do stuff here!')
+  }
+  ...
+}
+```
 
+Here's an example where we are accessing `props` (note `props` are read only)
+
+``` JavaScript
+// accessing props
+export default class Greeting extends React.Component {
+  constructor(props) {
+    super(props)
+    var name = "Foo " + props.name
+    console.log(name)
+  }
+  ...
+}
+```
 
 
 
