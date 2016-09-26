@@ -363,7 +363,7 @@ ReactDOM.render(
 )
 ```
 
-### React Components
+### Components
 
 React is component-focused, and components are the primary structure of React. Data flows through React from parent to child components, so you do not have to deal with confusing two-way data-flow. In addition, child components only have access to data their parents explicitly pass down to them, further decoupling them from each other.
 
@@ -385,7 +385,16 @@ export default class Greeting extends React.Component {
 
 Here you can see we're using `React.Component` which is an ES6 class. `export` is used to make it a JS Module. Inside the class is `render` which is a function that returns some JSX. `this.props` is an object that contains any properties passed to it from it's parent. Finally, because `class` is a reserved word in JS we're JSX uses `className` instead. This is a common mistake to watch out for!
 
-Note: You can also use `React.createClass` instead of `React.Component`, but it has a different syntax. I prefer the ES6 syntax, which uses less React boilerplate and more JavaScript.
+We can update our CSS to confirm this:
+
+``` CSS
+.greeting {
+  color: red;
+}
+
+```
+
+Note: You can also use `React.createClass` instead of `React.Component`, but it has a different syntax. I prefer the ES6 syntax, which uses less React boilerplate and more JavaScript. createClass refers to JS classes, not CSS classes.
 
 Now update our `app.js` to render our new component.
 
@@ -407,7 +416,6 @@ ReactDOM.render(
 We simply import the component as a module, and render it the same as we would any HTML, except we use our `Greeting` class name specifically. In addition, we can pass any `props` we like to the child. Since the child is expecting a `name` prop, we're passing in `name="World"` which looks and feels just like HTML!
 
 Because we're using ES6 classes, we also have access to the constructor of our `Greeting` class. If you want to do some kind of work on the class when it's created, add the `constructor` function. Optionally, you can access the child's `props` here. If you want to use `props` inside the constructor you must pass them to `super`.
-
 
 ``` JavaScript
 export default class Greeting extends React.Component {
@@ -433,35 +441,137 @@ export default class Greeting extends React.Component {
 }
 ```
 
+### Synthetic Events/Event Handling
+
+Because `props` are read only, there is an object called `state` that we have access to, and can notify the application when it is updated. Components are just state machines. You can also write in interactivity with Synthetic Events and Event Handling. In combination, these allow you to build truly interactive web applications quickly. There are a large number of Synthetic Events to which you can bind https://facebook.github.io/react/docs/events.html.
+
+I'm going to add an example to our Greeting component so that it has some user interactivity.
 
 
+``` JavaScript
+export default class Greeting extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      name: props.name
+    }
+  }
+  ...
+}
+```
 
+Now let's update the JSX to include a text box, which runs an Event Handler when the Synthetic Event `onChange` is triggered.
 
+``` JavaScript
+...
+  render () {
+    return (
+      <div>
+        <h1 className='greeting'>Hello, {this.state.name || this.props.name}!</h1>
+        <input type='text' placeholder='Enter your name' onChange={this.handleChange} />
+      </div>
+    )
+  }
+...
+```
 
+And finally, the handleChange function.
 
+```
+...
+  handleChange (event) {
+    this.setState({
+      name: event.target.value
+    })
+  }
+  render () {
+...
+```
 
+The `setState` function notifies the DOM of the change of state, updating the DOM so that when the user types in the text box, the h1 will display their text. This is a super basic example, but with this basic understanding of how data flows from Synthetic Events to Event Handlers, to State is the majority of the work when building React apps.
 
+Some important thing to note about state:
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+1) Never copied data from `props` to `state`.
+2) Never mutate this.state directly (after construction), as calling setState afterwards could replace any mutations you made. Treat state as if it were immutable.
+3) Calling setState will trigger a re-render (unless conditional logic is implimented in `shouldComponentUpdate()`).
 
 ## Testing
+
+In order to set up testing we have to add some configuration to the webpack.config.js file to enable Enzyme.
+
+```
+// webpack.config.js
+...
+  externals: {
+    'react/addons': true,
+    'react/lib/ExecutionEnvironment': true,
+    'react/lib/ReactContext': true
+    },
+...
+```
+
+Now install the testing tools `mocha`, `chai`, `jsdom`, and `react-addons-test-utils`. Enzyme needs `react-addons-test-utils` and `jsdom` for some of its functionality in the way we will be using it.
+
+```
+npm install --save-dev mocha chai jsdom react-addons-test-utils
+```
+
+### jsdom
+
+According to the enzyme docs:
+
+> JSDOM is a JavaScript based headless browser that can be used to create a realistic testing environment.
+
+> Since enzyme's mount API requires a DOM, JSDOM is required in order to use mount if you are not already in a browser environment (ie, a Node environment).
+
+> For the best experience with enzyme, it is recommended that you load a document into the global scope before requiring React for the first time. It is very important that the below script gets run before React's code is run.
+
+> As a result, a standalone script like the one below is generally a good approach:
+
+```
+/* setup.js */
+
+var jsdom = require('jsdom').jsdom
+
+var exposedProperties = ['window', 'navigator', 'document']
+
+global.document = jsdom('')
+global.window = document.defaultView
+Object.keys(document.defaultView).forEach((property) => {
+  if (typeof global[property] === 'undefined') {
+    exposedProperties.push(property)
+    global[property] = document.defaultView[property]
+  }
+})
+
+global.navigator = {
+  userAgent: 'node.js'
+}
+```
+
+We also need to add babel support since we're using ES6, so add this at the top of the setup.js file:
+
+```
+require('babel-register')()
+```
+
+> When testing with JSDOM, the setup.js file above needs to be run before the test suite runs. If you are using mocha, this can be done from the command line using the --require option:
+
+```
+"scripts": {
+  "test": "mocha --require setup.js --recursive  src/*.spec.js"
+  ...
+```
+
+Now that we have completely finished setting up our tools, we can get to writing some tests.
+
+Let's write a really simple test to ensure root component loads:
+
+
+
+
+
 
 
 
