@@ -1,9 +1,11 @@
 require('babel-register')()
 
-import { jsdom } from 'jsdom'
-import chai from 'chai'
-// import chaiEnzyme from 'chai-enzyme'
-// import chaiJsx from 'chai-jsx'
+var chai = require('chai')
+var chaiEnzyme = require('chai-enzyme')
+
+chai.use(chaiEnzyme())
+
+var jsdom = require('jsdom').jsdom
 
 var exposedProperties = ['window', 'navigator', 'document']
 

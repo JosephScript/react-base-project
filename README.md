@@ -1,6 +1,6 @@
 # A Guide to React for FE developers
 
-In this React walk through we're going to be using the React JavaScript library for quickly building really fast interfaces, Webpack as our package bundler and to run our development server. Then we'll create a testing suite using Enzyme and Mocha. You can easily substitute Mocha with any other testing framework (Sinon, Jasmine, etc.). Finally I'll show you how to integrate Webpack with Gulp (you could swap this out with Grunt easily).
+In this React walk through we're going to be using the React JavaScript library for quickly building really fast interfaces, Webpack as our package bundler and to run our development server. Then we'll create a testing suite using Enzyme and Mocha. You can easily substitute Mocha with any other testing framework (Sinon, Jasmine, etc.).
 
 This tutorial does not cover Flux/Reflux/Redux. Why? You probably don't need it for building small components and interfaces, and if you start building things using the parent/child data relationship that's built into react. It's better to learn how to "think react" instead of relying on Redux which has its tradeoffs. Come back to Redux if you find a real need for it. (I might cover Redux in a later guide.)
 
@@ -498,23 +498,10 @@ Some important thing to note about state:
 
 ## Testing
 
-In order to set up testing we have to add some configuration to the webpack.config.js file to enable Enzyme.
+Install the testing tools `enzyme`, `mocha`, `chai`, `chai-enzyme`, `jsdom`, and `react-addons-test-utils`. Enzyme needs `react-addons-test-utils` and `jsdom` for some of its functionality in the way we will be using it.
 
 ```
-// webpack.config.js
-...
-  externals: {
-    'react/addons': true,
-    'react/lib/ExecutionEnvironment': true,
-    'react/lib/ReactContext': true
-    },
-...
-```
-
-Now install the testing tools `mocha`, `chai`, `jsdom`, and `react-addons-test-utils`. Enzyme needs `react-addons-test-utils` and `jsdom` for some of its functionality in the way we will be using it.
-
-```
-npm install --save-dev mocha chai jsdom react-addons-test-utils
+npm install --save-dev enzyme mocha chai chai-enzyme jsdom react-addons-test-utils
 ```
 
 ### jsdom
@@ -523,14 +510,16 @@ According to the enzyme docs:
 
 > JSDOM is a JavaScript based headless browser that can be used to create a realistic testing environment.
 
-> Since enzyme's mount API requires a DOM, JSDOM is required in order to use mount if you are not already in a browser environment (ie, a Node environment).
-
-> For the best experience with enzyme, it is recommended that you load a document into the global scope before requiring React for the first time. It is very important that the below script gets run before React's code is run.
-
-> As a result, a standalone script like the one below is generally a good approach:
+In the following script we're setting up babel, adding chai with enzyme support, and creating a dom in which to simulate a browser environment.
 
 ```
-/* setup.js */
+// setup.js
+require('babel-register')()
+
+var chai = require('chai')
+var chaiEnzyme = require('chai-enzyme')
+
+chai.use(chaiEnzyme())
 
 var jsdom = require('jsdom').jsdom
 
@@ -550,34 +539,83 @@ global.navigator = {
 }
 ```
 
-We also need to add babel support since we're using ES6, so add this at the top of the setup.js file:
+We also need to tell babel which plugins to use. Create a .babelrc file and add the following:
 
 ```
-require('babel-register')()
+{
+  "presets": [
+     "react",
+     "es2015"
+  ]
+}
 ```
 
-> When testing with JSDOM, the setup.js file above needs to be run before the test suite runs. If you are using mocha, this can be done from the command line using the --require option:
+In our package.json file we can set up our tests, and pass in the setup file:
 
 ```
 "scripts": {
-  "test": "mocha --require setup.js --recursive  src/*.spec.js"
+  "test": "mocha setup.js src/**/*.spec.js"
   ...
 ```
 
 Now that we have completely finished setting up our tools, we can get to writing some tests.
 
-Let's write a really simple test to ensure root component loads:
+Let's write a really simple test to ensure our Greeting component loads. We have an example that shows how to test DOM content, one that shows how to test props, and how to test props of the component upon initialization.
 
+We're running some tests with `shallow` and one with `mount`. Shallow is a 'real' unit test (isolation, no children render). `render` is full DOM rendering, which is ideal for use cases where you have components that may interact with DOM APIs, or may require the full lifecycle in order to fully test the component. There is also `static`, and I find as a good rule of thumb that if you want to test children rendering with less overhead than `mount` and you are not interested in lifecycle methods, use static.
 
+See [enzyme](https://github.com/airbnb/enzyme) for more information.
 
+```
+import React from 'react'
+import { mount, shallow } from 'enzyme'
+import { expect } from 'chai'
 
+import Greeting from './greeting'
 
+describe('<Greeting/>', function () {
+  it('should have an `h1` to display a greeting', function () {
+    const wrapper = shallow(<Greeting />)
+    expect(wrapper.find('h1')).to.have.length(1)
+  })
 
+  it('should have no `props` for name', function () {
+    const wrapper = shallow(<Greeting />)
+    expect(wrapper.props().name).to.be.undefined
+  })
 
+  it('should have `props` for name', function () {
+    const wrapper = mount(<Greeting name='World' />)
+    expect(wrapper.props().name).to.equal('World')
+  })
+})
+```
 
+Finally, we can run a test to see what happens!
 
+```
+$ npm test
+> mocha setup.js src/**/*.spec.js
 
+  <Greeting/>
+    ✓ should have an `h1` to display a greeting
+    ✓ should have no `props` for name
+    ✓ should have `props` for name
 
-## Gulp
+  2 passing (18ms)
+```
 
-webpack can sometimes be limited because of how new it is, and with how ubiquitous Gulp tasks are you may want more fine grained build processes. Luckily because Gulp and webpack are just Node JS packages, it turns out that integrating Gulp into your webpack workflow is easy.
+Let's add a functional test:
+
+```
+...
+it('typing in box should update state', function () {
+  const wrapper = shallow(<Greeting/>)
+  wrapper.find('input').simulate('change', {target: {value: 'Bilbo'}})
+  expect(wrapper.state('name')).to.equal('Bilbo')
+})
+```
+
+Here you can see that we're not only simulating an input change, but also then checking that `state` updated as it should.
+
+With the ability to test the DOM, `props` and `state`, as well as simulating Synthetic Events, this testing framework becomes very flexable.
