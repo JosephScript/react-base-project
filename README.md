@@ -31,12 +31,12 @@ Let's assume we have all of our app's source code inside `/src` and make a basic
 
 ``` JavaScript
 module.exports = {
-  context: __dirname + "/src",
-  entry: "./app.js",
+  context: __dirname + '/src',
+  entry: './app.js',
 
   output: {
-    filename: "app.js",
-    path: __dirname + "/dist",
+    filename: 'app.js',
+    path: __dirname + '/dist',
   },
 }
 ```
@@ -94,12 +94,12 @@ In the output of the `webpack -d` command you'll see that it generates a hash, w
 
 ``` JavaScript
 module.exports = {
-  context: __dirname + "/src",
-  entry: "./app.js",
+  context: __dirname + '/src',
+  entry: './app.js',
 
   output: {
-    filename: "app.[hash].js",
-    path: __dirname + "/dist",
+    filename: 'app.[hash].js',
+    path: __dirname + '/dist',
   },
 }
 ```
@@ -181,9 +181,9 @@ module.exports = {
   module: {
     ...
     loaders: [
-      { test: /\.css$/, loader: "style-loader!css-loader" },
-      { test: /\.png$/, loader: "url-loader?limit=100000" },
-      { test: /\.jpg$/, loader: "file-loader" }
+      { test: /\.css$/, loader: 'style-loader!css-loader' },
+      { test: /\.png$/, loader: 'url-loader?limit=100000' },
+      { test: /\.jpg$/, loader: 'file-loader' }
     ]
   }
 }
@@ -456,7 +456,7 @@ Here's an example where we are accessing `props` (note `props` are read only)
 export default class Greeting extends React.Component {
   constructor(props) {
     super(props)
-    var name = "Foo " + props.name
+    var name = 'Foo ' + props.name
     console.log(name)
   }
   ...
