@@ -641,3 +641,7 @@ it('typing in box should update state', function () {
 Here you can see that we're not only simulating an input change, but also then checking that `state` updated as it should.
 
 With the ability to test the DOM, `props` and `state`, as well as simulating Synthetic Events, this testing framework becomes very flexable.
+
+## Next Steps
+
+So far this is just a very basic introduction into Webpack and React that relies heavily on the command line tools. I would like to continue building out a full example project that goes beyond the command line basics of Webpack to include an Express server and proxy for local testing against APIs, create a sample React project structure, and illustrate more complex data flows inside React.
