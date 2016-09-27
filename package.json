@@ -1,7 +1,7 @@
 {
   "name": "react-react-base-project",
   "version": "1.0.0",
-  "description": "A Guide to React for FE developers",
+  "description": "A base project for react, along with a guide to React for FE developers",
   "main": "server.js",
   "scripts": {
     "start": "webpack-dev-server --progress --inline --hot",
