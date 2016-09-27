@@ -1,4 +1,4 @@
-# A Guide to React for FE developers
+# A Guide to React using Webpack for FE developers
 
 In this React walk through we're going to be using the React JavaScript library for quickly building really fast interfaces, Webpack as our package bundler and to run our development server. Then we'll create a testing suite using Enzyme and Mocha. You can easily substitute Mocha with any other testing framework (Sinon, Jasmine, etc.).
 
@@ -142,6 +142,28 @@ This is a really clumsy thing to type, so let's add it as npm start:
 }
 
 ```
+
+### Proxy
+
+The Webpack dev server makes use of `http-proxy-middleware` to optionally proxy requests to a separate, possibly external, backend server.
+
+```
+// webpack.config.js
+{
+  devServer: {
+    ...
+    proxy: {
+      '/api': {
+        target: 'https://other-server.example.com/api',
+        secure: false
+      }
+    }
+  }
+  ...
+}
+```
+
+The proxy can be bypassed based on the return from a function, and the request to the proxy can be rewritten by providing a function.
 
 ## Modules and Loaders
 
