@@ -179,7 +179,6 @@ Update your `webpack.config.js` to include some loaders:
 module.exports = {
   ...
   module: {
-    ...
     loaders: [
       { test: /\.css$/, loader: 'style-loader!css-loader' },
       { test: /\.png$/, loader: 'url-loader?limit=100000' },
@@ -201,7 +200,7 @@ Add a file `src/styles.css` and set `body { background-color: red; }` just to ma
 
 In order to get the styles to show up, you have to either make a custom HTML file, or add the css file to your HtmlWebpackPlugin (which handles the linking for you), both of which a second request and don't bundle your files for you.
 
-Restart your server and in your `app.js` file add `require('./styles.css')`. Once the page loads it should be red!
+In your `app.js` file add `require('./styles.css')`. Once the page loads it should be red!
 
 ### ES2015/ES6 Module
 
@@ -246,7 +245,13 @@ By default `webpack-dev-server` will trigger a full page refresh. However we can
 
 It's smart too, because it detects which modules are required and which have changed. If the polling shows no changes needed, nothing happens.
 
-Add `--inline --hot` to your npm start script. Nothing more is needed. This does all the relevant work automatically. The CLI of the `webpack-dev-server` automatically adds the special `webpack/hot/dev-server` entry point to your configuration.
+Add `--hot` to your npm start script. Nothing more is needed. This does all the relevant work automatically. The CLI of the `webpack-dev-server` automatically adds the special `webpack/hot/dev-server` entry point to your configuration.
+
+So your start script should be :
+
+```
+"start": "webpack-dev-server --progress --inline --hot"
+```
 
 Just navigate to `http://«host»:«port»/«path»` and let the magic happen.
 
@@ -306,7 +311,7 @@ import { render } from 'react-dom';
 import React from 'react';
 
 render(
-  <h1 class="greeting">
+  <h1>
     Hello, World!
   </h1>,
   document.body
@@ -327,7 +332,7 @@ var root = document.createElement('div')
 document.body.appendChild(root)
 
 ReactDOM.render(
-  <h1 class="greeting">
+  <h1>
     Hello, World!
   </h1>,
   root
@@ -378,7 +383,7 @@ Now update the JSX to use the root div instead:
 var root = document.getElementById('react-root')
 
 ReactDOM.render(
-  <h1 class="greeting">
+  <h1>
     Hello, World!
   </h1>,
   root
