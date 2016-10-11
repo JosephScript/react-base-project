@@ -12,7 +12,7 @@ git init
 npm init
 ```
 
-When you run `npm init` fill in the details however you see fit. In my case I used `server.js` as my `main` file, and this will be the server that serves static assets.
+When you run `npm init` fill in the details however you see fit. For example you can use `index.js` as your main Node file, and this will be the server that serves static assets, or maybe acts as your API server (check out how to proxy below).
 
 ## Webpack:
 
