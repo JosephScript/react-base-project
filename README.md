@@ -307,8 +307,8 @@ Read [this](https://facebook.github.io/react/docs/jsx-in-depth.html) to see why.
 
 
 ``` JavaScript
-import { render } from 'react-dom';
-import React from 'react';
+import { render } from 'react-dom'
+import React from 'react'
 
 render(
   <h1>
@@ -328,10 +328,11 @@ You shouldn't render react directly into the body. There are two things you can 
 
 
 ``` JavaScript
+import { render } from 'react-dom'
 var root = document.createElement('div')
 document.body.appendChild(root)
 
-ReactDOM.render(
+render(
   <h1>
     Hello, World!
   </h1>,
@@ -355,7 +356,7 @@ module.exports = {
     ...
     new HtmlWebpackPlugin({
       template: 'index.template.html',
-      inject: 'body',
+      inject: 'body'
     })
   ],
   ...
@@ -380,9 +381,10 @@ Now update the JSX to use the root div instead:
 
 ``` JavaScript
 // app.js
+import { render } from 'react-dom'
 var root = document.getElementById('react-root')
 
-ReactDOM.render(
+render(
   <h1>
     Hello, World!
   </h1>,
@@ -428,13 +430,13 @@ Now update our `app.js` to render our new component.
 ``` JavaScript
 import './styles.css'
 import React from 'react'
-import ReactDOM from 'react-dom'
+import { render } from 'react-dom'
 import Greeting from './components/greeting'
 
 var root = document.createElement('div')
 document.body.appendChild(root)
 
-ReactDOM.render(
+render(
   <Greeting name='World' />,
   root
 )
@@ -480,7 +482,7 @@ export default class Greeting extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      name: props.name
+      name: ''
     }
   }
   ...
