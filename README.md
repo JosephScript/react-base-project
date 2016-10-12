@@ -550,7 +550,7 @@ Some important thing to note about state:
 Install the testing tools `enzyme`, `mocha`, `chai`, `chai-enzyme`, `jsdom`, and `react-addons-test-utils`. Enzyme needs `react-addons-test-utils` and `jsdom` for some of its functionality in the way we will be using it.
 
 ```
-npm install --save-dev enzyme mocha chai chai-enzyme jsdom react-addons-test-utils
+npm install --save-dev enzyme mocha chai chai-enzyme jsdom react-addons-test-utils babel-register
 ```
 
 ### jsdom
