@@ -13,7 +13,10 @@ module.exports = {
     path: __dirname + '/dist'
   },
   plugins: [
-    new HtmlWebpackPlugin()
+    new HtmlWebpackPlugin({
+      template: 'index.template.html',
+      inject: 'body'
+    })
   ],
   module: {
     loaders: [

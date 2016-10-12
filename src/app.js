@@ -3,8 +3,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import Greeting from './components/greeting'
 
-var root = document.createElement('div')
-document.body.appendChild(root)
+var root = document.getElementById('react-root')
 
 ReactDOM.render(
   <Greeting name='World' />,
