@@ -4,6 +4,8 @@ var webpack = require('webpack')
 module.exports = {
   context: __dirname + '/src',
   entry: [
+    'react-hot-loader/patch',
+    'webpack/hot/only-dev-server',
     './app.js'
   ],
   output: {
@@ -20,7 +22,7 @@ module.exports = {
         exclude: /(node_modules|bower_components)/,
         loader: 'babel-loader',
         query: {
-          presets: ['es2015', 'react', 'react-hmre']
+          presets: ['es2015', 'react']
         }
       },
       { test: /\.css$/, loader: 'style-loader!css-loader' },

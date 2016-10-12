@@ -270,11 +270,11 @@ If you insted want to use an express/node webpack server as middleware, check ou
 
 Let's start off with a really dead simple app just to make sure our build process is working and React. Then we can start adding in pieces and tests as we go along. For now, let's just get a `p` tag on the page with a hello world.
 
-First we have to add react to our babel loaders. In addition to enable HMR for React, we need to add the appropriate React tools to compile the modules with HMR support.
+First we have to add react to our babel loaders.
 
 
 ```
-npm install babel-preset-react babel-preset-react-hmre --save-dev
+npm install babel-preset-react --save-dev
 ```
 
 ``` JavaScript
@@ -288,9 +288,27 @@ module.exports = {
         exclude: /(node_modules|bower_components)/,
         loader: 'babel-loader',
         query: {
-          presets: ['es2015', 'react', 'react-hmre']
+          presets: ['es2015', 'react']
       },
       ...
+```
+
+And in order to maintain Hot Module Replacement with React, we have to use the React Hot Loader. (Note: As of writing, React Hot Loader is in beta, and requires a patch. This step will likely change!)
+
+```
+npm install react-hot-loader --save-dev
+```
+
+```
+
+module.exports = {
+  ...
+  entry: [
+  'react-hot-loader/patch',
+  'webpack/hot/only-dev-server',
+  './app.js'
+  ],
+  ...
 ```
 
 And add react itself (Note that because React is required for our application to run, we’re using `--save `rather than `--save-dev`.):
@@ -422,6 +440,8 @@ We can update our CSS to confirm this:
 }
 
 ```
+
+To watch our hot reloader in action, try changing the color and see that the page doesn't refresh!
 
 Note: You can also use `React.createClass` instead of `React.Component`, but it has a different syntax. I prefer the ES6 syntax, which uses less React boilerplate and more JavaScript. createClass refers to JS classes, not CSS classes.
 
