@@ -1,13 +1,13 @@
 {
   "name": "react-react-base-project",
   "version": "1.0.0",
-  "description": "A base project for react, along with a guide to React for FE developers",
-  "main": "server.js",
+  "description": "A base project for React, along with a guide to React for FE developers",
+  "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server --progress --inline --hot",
     "test": "mocha setup.js src/**/*.spec.js"
   },
-  "author": "",
+  "author": "Joseph Szczesniak",
   "license": "none",
   "devDependencies": {
     "babel-core": "^6.14.0",
